@@ -4,7 +4,7 @@
 
 - [About](#about)
 - [Getting Started](#getting_started)
-- [Usage](#usage)
+- [Installing](#installing)
 
 
 ## About <a name = "about"></a>
@@ -23,7 +23,7 @@ You should have npm installed on your system
 
 - Clone this repo.
 
-- Create a Muted role in your server
+- Create a Muted role in your server and copy its ID
 
 Add an .env file to add TOKEN and MUTE_ID
 
