@@ -9,6 +9,10 @@ const {
     stripIndents
 } = require('common-tags');
 
+const Git = require('../../models/git.module')
+
+const fs = require('fs')
+
 module.exports = {
     name: "whois",
     category: "Info",
@@ -16,7 +20,12 @@ module.exports = {
     usage:"!whois [@user]",
     run: async (client, message, args) => {
 
-
+        
+        const git = await Git.find({
+            userID: message.member.id
+        }).exec()
+        
+        
         //need to fix !whois @roles
         const member = getMember(message, args.join(" "))
 
@@ -28,8 +37,11 @@ module.exports = {
             .map(r => r)
             .join(", ") || "none";
 
+          
+
         const created = formatDate(member.user.createdAt)
 
+       
         const embed = new MessageEmbed()
             .setFooter(member.displayName, member.user.displayAvatarURL())
             .setThumbnail(member.user.displayAvatarURL(0))
@@ -37,6 +49,7 @@ module.exports = {
 
             .addField('Member information:', stripIndents `**> Display name:** ${member.displayName}
                 **> Joined at:** ${joined}
+                **> Git Url: ** ${(git.length > 0) ? git[0].gitURL : 'No Git URL'  }
                 **> Roles:** ${roles}`, true)
 
             .addField('User information:', stripIndents `**> ID:** ${member.user.id}
@@ -52,4 +65,14 @@ module.exports = {
         message.channel.send(embed);
     }
 
+}
+
+
+function getGit(userID , callback){
+    Git.findOne({
+        userID : userID
+    }).exec((err,user)=>{
+        if(err) callback(err,null)
+        else callback(null,user)
+    })
 }

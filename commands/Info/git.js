@@ -3,9 +3,12 @@ const {
     MessageEmbed
 } = require('discord.js');
 const {
-    getMember} = require('../../functions');
+    
+    checkIfExisting
+} = require('../../functions');
 var validUrl = require('valid-url');
 const fs = require('fs');
+const Git = require('../../models/git.module')
 
 module.exports = {
     name: "git",
@@ -19,23 +22,55 @@ module.exports = {
             timeout: 5000
         }));
 
-    
-        let memberGit = {
-            id : message.member.id,
-            gitURL : url
-        }
-
-
-        let data = JSON.stringify(memberGit)
-        
-        const embed = new MessageEmbed()
-        .setDescription(`The following URL: ${url} has been added to your profile.`)
-        
-        fs.writeFile('./data/git.json',data,(done,err)=>{
+        Git.find({
+            userID : message.member.id
+        },(err,found)=>{
             if(err) console.log(err)
-            else message.channel.send(embed)
-            })
+            else{
+                if(found.length === 0) createNewEntry(message,message.member.id,url)
+                else updateEntry(message,message.member.id,url)
+            }
+           
+        })
 
+       
 
     }
+}
+
+function createNewEntry(message,userID,gitURL){
+    let memberGit = new Git({
+        userID : userID,
+        gitURL : gitURL
+    })
+
+    const embed = new MessageEmbed()
+    .setDescription(`The following URL: ${gitURL} has been added to your profile.`)
+
+   
+    memberGit.save(err=>{
+        if(!err) 
+        message.channel.send(embed)
+        else{
+            
+            console.log(err)
+            return message.reply('There was an error!').then(m => m.delete({
+                timeout: 5000
+            }));
+        }
+    })
+
+}
+
+function updateEntry(message,userID,gitURL){
+
+    const embed = new MessageEmbed()
+    .setDescription(`The following URL: ${gitURL} has been added to your profile.`)
+
+    Git.findOneAndUpdate({userID : userID} , {gitURL : gitURL},(err,done)=>{
+        if(err) console.log(err)
+        else {
+            message.channel.send(embed)
+        }
+    })
 }

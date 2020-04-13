@@ -1,3 +1,5 @@
+
+
 module.exports = {
     getMember: function (message, toFind = '') {
         toFind = toFind.toLowerCase();
@@ -37,7 +39,6 @@ module.exports = {
             })
             .then(collected => collected.first() && collected.first().emoji.name)
 
-    },
-
+    }
 
 }

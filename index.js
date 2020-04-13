@@ -2,6 +2,7 @@ require('dotenv').config();
 const fs = require('fs');
 const Discord = require("discord.js");
 const ascii = require("ascii-table");
+const Mongoose =require('mongoose');
 
 
 // Create a new Ascii table
@@ -38,6 +39,9 @@ fs.readdirSync('./commands').filter(dir => {
 //Show ASCII Table of Modules Loaded
 console.log(table.toString());
 
+
+Mongoose.connect(process.env.MONGODB_URL,{useNewUrlParser:true , useUnifiedTopology : true , useFindAndModify : false})
+Mongoose.connection.on('error',err=>console.log(err))
 
 
 
