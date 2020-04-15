@@ -26,6 +26,7 @@ module.exports = {
     },
 
     promptMessage: async function (message, author, time, validReactions) {
+        
         time *= 1000;
 
         for (const reaction of validReactions) await message.react(reaction)
